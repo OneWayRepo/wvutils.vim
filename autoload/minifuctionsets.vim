@@ -39,3 +39,4 @@ function! minifuctionsets#appendtexttofile(pos,astring) abort
 	let failed = append(a:pos, a:astring)
 	return
 endfunction
+

@@ -214,6 +214,47 @@ function! <SID>StartTimer(meclips)
 	let timer = timer_start(s:eclips, 'TimerProcess', {'repeat': 3})
 endfunction
 
+" 以下是面向对象的编程
+let s:ClassObject = {}
+let s:ClassObject.name = ''
+let s:ClassObject.id   = 0
+function! s:ClassObject.status() abort dict
+	echo self.name
+endfunction
+
+" 多态与继承
+let s:ClassSub1 = deepcopy(s:ClassObject)
+function! s:ClassSub1.status() abort dict
+	echo 'Sub1:' . self.name
+endfunction
+let s:ClassSub2 = deepcopy(s:ClassObject)
+function! s:ClassSub2.status() abort dict
+	echo 'Sub2:' . self.name
+endfunction
+
+function! <SID>test_oo_function() abort
+	let l:object 	  = deepcopy(s:ClassObject) 
+	let l:object.name = 'Object'
+	call l:object.status()
+
+	let l:sub1 	  = deepcopy(s:ClassSub1) 
+	let l:sub1.name   = 'sub1'
+	call l:sub1.status()
+
+	let l:sub2 	  = deepcopy(s:ClassSub2) 
+	let l:sub2.name   = 'sub2'
+	call l:sub2.status()
+
+	let l:obj 	  = class#objectclass#new()
+	call l:obj.status()
+
+	let l:mobj 	  = class#moduleclass#new()
+	call l:mobj.status()
+	call l:mobj.setname('hero')
+	call l:mobj.status()
+
+endfunction
+
 " 自定义命令,注意命令的首字母必须要大写
 " :WvuFight <cr> 这样就能调用
 command! -nargs=0 WvuFight    		call minifuctionsets#message("祝你好运",1)
@@ -221,6 +262,7 @@ command! -nargs=0 WvuText     		call minifuctionsets#appendtexttofile(0,"hello")
 command! -nargs=0 WvuDraft    		call <SID>SplitDraft()
 command! -nargs=0 WvuComment  		call <SID>AddComment()
 command! -nargs=0 WvuTest     		call <SID>Test()
+command! -nargs=0 Wvuootest  		call <SID>test_oo_function()
 " 添加需要函数参数的命令
 " 需要添加秒数为参数
 command! -nargs=1 WvuStartTimer     	call <SID>StartTimer(<args>)
