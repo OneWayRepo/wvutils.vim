@@ -25,7 +25,7 @@ endfunction
 " 打开一个草稿文件
 function! <SID>SplitDraft() abort
 	if !exists('g:wvu_draftpath')
-		let g:wvu_draftpath = '~/.vim/__DRAFT__'
+		let g:wvu_draftpath = expand('~/.vim/__DRAFT__')
 	endif
 	let s:fileexist = 0
 	if filereadable(g:wvu_draftpath) 
