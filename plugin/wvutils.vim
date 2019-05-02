@@ -24,6 +24,15 @@ endfunction
 
 let s:wvu_draftfile = expand('~/.vim/__DRAFT__')
 
+augroup DraftGroup
+	autocmd!
+	autocmd VimEnter *
+			\   if !argc()
+			\ |   execute 'WvuPreview'
+			\ |   wincmd h
+			\ | endif
+augroup END
+
 " 打开一个草稿文件
 function! <SID>SplitDraft() abort
 	if !exists('g:wvu_draftpath')
@@ -62,6 +71,9 @@ function! <SID>SplitPreview() abort
 	endif
 	if filereadable(g:wvu_draftpath) 
 		silent! execute 'vertical botright ' . '50 ' . 'split ' . g:wvu_draftpath
+		" 注意，运行到此处的时候，焦点已经在新的窗体中了。
+		set readonly
+		set winfixwidth
 	endif
 	return
 endfunction
