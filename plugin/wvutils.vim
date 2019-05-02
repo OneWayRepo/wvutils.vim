@@ -22,10 +22,12 @@ function! <SID>AddComment() abort
 	call minifuctionsets#appendtexttofile(line('.') - 1,'//')
 endfunction
 
+let s:wvu_draftfile = expand('~/.vim/__DRAFT__')
+
 " 打开一个草稿文件
 function! <SID>SplitDraft() abort
 	if !exists('g:wvu_draftpath')
-		let g:wvu_draftpath = '/home/kevin/.vim/__DRAFT__'
+		let g:wvu_draftpath = s:wvu_draftfile
 	endif
 	let s:fileexist = 0
 	if filereadable(g:wvu_draftpath) 
@@ -49,6 +51,17 @@ function! <SID>SplitDraft() abort
 	silent! execute 'vertical ' . '35 ' . 'split ' . g:wvu_draftpath
 	if s:fileexist == 0
 		let failed = minifuctionsets#appendtexttofile(0,"<<----草稿纸---->>")
+	endif
+	return
+endfunction
+
+" preview与Draft的区别是这个只是浏览
+function! <SID>SplitPreview() abort
+	if !exists('g:wvu_draftpath')
+		let g:wvu_draftpath = s:wvu_draftfile
+	endif
+	if filereadable(g:wvu_draftpath) 
+		silent! execute 'vertical botright ' . '50 ' . 'split ' . g:wvu_draftpath
 	endif
 	return
 endfunction
@@ -260,6 +273,7 @@ endfunction
 command! -nargs=0 WvuFight    		call minifuctionsets#message("祝你好运",1)
 command! -nargs=0 WvuText     		call minifuctionsets#appendtexttofile(0,"hello")
 command! -nargs=0 WvuDraft    		call <SID>SplitDraft()
+command! -nargs=0 WvuPreview   		call <SID>SplitPreview()
 command! -nargs=0 WvuComment  		call <SID>AddComment()
 command! -nargs=0 WvuTest     		call <SID>Test()
 command! -nargs=0 Wvuootest  		call <SID>test_oo_function()
