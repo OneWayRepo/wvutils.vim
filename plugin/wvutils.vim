@@ -268,6 +268,11 @@ function! <SID>test_oo_function() abort
 
 endfunction
 
+" 这样可以进行命令行与normal命令的链接
+function! <SID>NormalInstrument() abort
+	execute 'normal gg'
+endfunction
+
 " 自定义命令,注意命令的首字母必须要大写
 " :WvuFight <cr> 这样就能调用
 command! -nargs=0 WvuFight    		call minifuctionsets#message("祝你好运",1)
@@ -280,6 +285,7 @@ command! -nargs=0 Wvuootest  		call <SID>test_oo_function()
 " 添加需要函数参数的命令
 " 需要添加秒数为参数
 command! -nargs=1 WvuStartTimer     	call <SID>StartTimer(<args>)
+command! -nargs=0 WvuInstrument  	call <SID>NormalInstrument()
 
 " 在插入的状态下，键入:，并且如果是ledger文件类型
 " 就能调用这个函数
