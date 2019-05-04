@@ -33,6 +33,11 @@ augroup DraftGroup
 			\ | endif
 augroup END
 
+" 创建一个窗体，指定宽度的窗体
+function! <SID>Core_Edit(width) abort
+	silent! execute 'vertical botright ' . a:width . 'split ' . g:wvu_draftpath
+endfunction
+
 " 打开一个草稿文件
 function! <SID>SplitDraft() abort
 	if !exists('g:wvu_draftpath')
@@ -56,8 +61,7 @@ function! <SID>SplitDraft() abort
 			endif
 		endif
 	endif
-
-	silent! execute 'vertical ' . '35 ' . 'split ' . g:wvu_draftpath
+	call <SID>Core_Edit(50)
 	if s:fileexist == 0
 		let failed = minifuctionsets#appendtexttofile(0,"<<----草稿纸---->>")
 	endif
@@ -70,7 +74,7 @@ function! <SID>SplitPreview() abort
 		let g:wvu_draftpath = s:wvu_draftfile
 	endif
 	if filereadable(g:wvu_draftpath) 
-		silent! execute 'vertical botright ' . '50 ' . 'split ' . g:wvu_draftpath
+		call <SID>Core_Edit(50)
 		" 注意，运行到此处的时候，焦点已经在新的窗体中了。
 		set readonly
 		set winfixwidth
