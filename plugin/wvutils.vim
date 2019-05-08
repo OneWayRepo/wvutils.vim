@@ -26,6 +26,7 @@ let s:wvu_draftfile = expand('~/.vim/__DRAFT__')
 
 augroup DraftGroup
 	autocmd!
+	autocmd bufenter __DRAFT__ if (winnr("$") == 1) | q | endif
 	autocmd VimEnter *
 			\   if !argc()
 			\ |   execute 'WvuPreview'
