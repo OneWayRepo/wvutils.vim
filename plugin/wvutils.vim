@@ -36,6 +36,7 @@ augroup END
 
 " 创建一个窗体，指定宽度的窗体
 function! <SID>Core_Edit(width) abort
+	let b:draft_flag = 'Draft'
 	silent! execute 'vertical botright ' . a:width . 'split ' . g:wvu_draftpath
 endfunction
 
@@ -75,7 +76,11 @@ function! <SID>SplitPreview() abort
 		let g:wvu_draftpath = s:wvu_draftfile
 	endif
 	if filereadable(g:wvu_draftpath) 
-		call <SID>Core_Edit(50)
+		" 仅仅为了说明闭包函数的作用
+		function! Calwinwidth(width) closure
+			return a:width * 2 
+		endfunction
+		call <SID>Core_Edit(Calwinwidth(25))
 		" 注意，运行到此处的时候，焦点已经在新的窗体中了。
 		set readonly
 		set winfixwidth
