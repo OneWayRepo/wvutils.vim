@@ -142,8 +142,10 @@ function! <SID>Test() abort
 	"endfor
 	"let color = inputlist(['Select color:', '1. red',
 	"	\ '2. green', '3. blue'])
-	call minifuctionsets#message("当前颜色:",1)
+	" call minifuctionsets#message("当前颜色:",1)
 	"call pythonfunctionset#pythonprint("hello")
+
+	call minifuctionsets#asyn_create_dir("/home/kevin","123")
 endfunction
 
 fun! CompleteMonths(findstart, base) abort

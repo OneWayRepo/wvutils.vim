@@ -40,3 +40,19 @@ function! minifuctionsets#appendtexttofile(pos,astring) abort
 	return
 endfunction
 
+" 异步创建创建目录，使用job_start/job_status 的函数来创建目录
+function! minifuctionsets#asyn_create_dir(path,dir) abort
+	let s:dest = a:path . "/" . a:dir
+	echomsg s:dest 
+	let job = job_start(["/bin/sh","-c","mkdir -p " . s:dest])
+
+	if job_status(job) != "dead"
+		echomsg s:dest + "目录创建失败"
+	endif
+
+	" {'status': 'dead', 'cmd': ['/bin/sh', '-c', 'mkdir -p ~/123'],
+	" 'termsig': '', 'stoponexit': 'term', 'tty_out': '', 'exitval': 0,
+	" 'exit_cb': '', 'tty_in': '', 'channel': 'channel 0 open', 'proc
+	" ess': 91367}
+	"echo job_info(job) 
+endfunction
