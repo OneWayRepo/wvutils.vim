@@ -211,7 +211,7 @@ endfunction
 
 " 将文件中的内容以pop的方式显示出来
 function! <SID>ListAccount() abort
-	let s:refpath = '/.vim/plugged/wvutils.vim/data/'
+	let s:refpath ='/' . modulesmanager#get_vimfiles_dir() . '/' . 'modules/private/plugged/wvutils.vim/data/'
 	let s:accountscripts = ['gaccount.vim','saccount.vim','ssaccount.vim','empty.vim']
 	" &的定义描述见该文件头部
 	" s:mflag 只有3级
