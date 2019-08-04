@@ -34,40 +34,39 @@ function! <SID>EnterDate() abort
 	endif
 endfunction
 
-" 查找:符号的函数
-function! <SID>findflag() abort
+" 查找:数目函数
+function! <SID>calculate_colon() abort
 	let s:linestr = getline(".")
 	let maxlength = len(s:linestr)
-	let s:flag = 0
+	let s:number_colon = 0
 	if maxlength == 0
-		return s:flag
+		return s:number_colon
 	endif
-	let index = 1
+	let index = 0
 	while index != maxlength
-		let index = index + 1
 		if s:linestr[index] == ':'
-			let s:flag = s:flag + 1
+			let s:number_colon = s:number_colon + 1
 		endif
+		let index = index + 1
 	endwhile
-	return s:flag
+	return s:number_colon
 endfunction
 
 " 将文件中的内容以pop的方式显示出来
 function! <SID>ListAccount() abort
 	" &的定义描述见该文件头部
-	" s:mflag 只有3级
 	if &filetype == 'ledger'
-		let s:mflag = <SID>findflag()
-		if s:mflag > 4
-			let s:mflag = 4
-		endif
-		call ledgeopt#set_account_level(s:mflag+1)
+		let s:number_colon = <SID>calculate_colon()
+		call ledgeopt#set_account_level(s:number_colon)
 		let s:account = ledgeopt#get_accounts()
+
+		if s:account == [] 
+			return ''
+		endif
+
 		let s:newcontain = ['']
 		let s:empty = ''
-		if s:mflag < 2
-			let s:empty = ':'
-		elseif s:mflag == 2
+		if s:number_colon == 2
 			" 注意转意字符一定要用双引号
 			let s:empty = "\<Tab>\<Tab>" . '￥'
 		endif
@@ -91,11 +90,14 @@ augroup CompleteEventGroup
 augroup END
 fun! s:AccountFinish() abort
 	let s:level = ledgeopt#get_account_level() 
-	if 	s:level == 1
-		call ledgeopt#set_gaccount(ledgeopt#filte_string(v:completed_item['word']))
-	elseif	s:level == 2
-		call ledgeopt#set_saccount(ledgeopt#filte_string(v:completed_item['word']))
+	if 	s:level == 0
+		call ledgeopt#set_gaccount(v:completed_item['word'])
+	elseif	s:level == 1
+		call ledgeopt#set_saccount(v:completed_item['word'])
 	endif
+
+	call setline(line('.'),getline(".") . ':')
+	call cursor(line('.'),col('.') + 1)
 endfun
 
 " 在popupmenu中显示内容

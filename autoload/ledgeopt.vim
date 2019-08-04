@@ -31,7 +31,7 @@ let s:saccount=[]
 let s:taccount=[]
 
 " 设置科目级别
-let s:account_level=1
+let s:account_level = 0
 function! ledgeopt#set_account_level(value) abort
 	let s:account_level=a:value
 endfunction
@@ -75,7 +75,9 @@ function! ledgeopt#load_saccounts(gaccount) abort
 	let s:saccount=[]
 	for s:element in s:accounts
 		if s:element[0] == a:gaccount 
-			call add(s:saccount,s:element[1])
+			if len(s:element) > 1
+				call add(s:saccount,s:element[1])
+			endif
 		endif
 	endfor
 	call uniq(sort(s:saccount))
@@ -86,7 +88,9 @@ function! ledgeopt#load_taccounts(gaccount,saccount) abort
 	let s:taccount=[]
 	for s:element in s:accounts
 		if s:element[0] == a:gaccount && s:element[1] == a:saccount
-			call add(s:taccount,s:element[2])
+			if len(s:element) > 2
+				call add(s:taccount,s:element[2])
+			endif
 		endif
 	endfor
 	call uniq(sort(s:taccount))
@@ -113,20 +117,14 @@ endfunction
 
 " 接口函数，输入参数是第几级的科目
 function! ledgeopt#get_accounts() abort
-	if 	s:account_level == 1
+	if 	s:account_level == 0
 		call ledgeopt#load_gaccounts(g:ledger_accounts_source_path)
 		return ledgeopt#get_gaccounts()
-	elseif  s:account_level == 2
+	elseif  s:account_level == 1
 		call ledgeopt#load_saccounts(s:select_gaccount)
 		return ledgeopt#get_saccounts()
-	elseif 	s:account_level == 3
+	elseif 	s:account_level == 2
 		call ledgeopt#load_taccounts(s:select_gaccount,s:select_saccount)
 		return ledgeopt#get_taccounts()
 	endif
-endfunction
-
-" 去除字符串中的：
-function! ledgeopt#filte_string(string) abort
-	let s:index = stridx(a:string,":")
-	return strpart(a:string,0,s:index)
 endfunction
