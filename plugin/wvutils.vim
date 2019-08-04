@@ -206,19 +206,6 @@ fun! CompleteMonths(findstart, base) abort
 	endif
 endfun
 
-augroup CompleteEventGroup
-	autocmd!
-	autocmd CompleteDone *.ldg call s:AccountFinish() 
-augroup END
-fun! s:AccountFinish() abort
-	let s:level = ledgeopt#get_account_level() 
-	if 	s:level == 1
-		call ledgeopt#set_gaccounts(ledgeopt#filte_string(v:completed_item['word']))
-	elseif s:level == 2
-		call ledgeopt#set_saccounts(ledgeopt#filte_string(v:completed_item['word']))
-	endif
-endfun
-
 "　补全账户信息
 fun! CompleteAccount(findstart, base) abort
 	if a:findstart
@@ -245,74 +232,6 @@ fun! CompleteAccount(findstart, base) abort
 endfun
 " Ctrl-X  Ctrl-U之后进行触发
 set completefunc=CompleteAccount
-
-" 在popupmenu中显示内容
-function! s:ListContain(contain) abort
-	call complete(col('.'), a:contain)
-	return ''
-endfunc
-
-" 查找:符号的函数
-function! <SID>findflag() abort
-	let s:linestr = getline(".")
-	let maxlength = len(s:linestr)
-	let s:flag = 0
-	if maxlength == 0
-		return s:flag
-	endif
-	let index = 1
-	while index != maxlength
-		let index = index + 1
-		if s:linestr[index] == ':'
-			let s:flag = s:flag + 1
-		endif
-	endwhile
-	return s:flag
-endfunction
-
-" 显示日期
-function! <SID>EnterDate() abort
-	if &filetype == 'ledger'
-		let s:date = strftime("%Y/%m/%d")
-		let s:msg = input("输入凭证 ", s:date."\<Tab>\<Tab>".'*')
-		let failed = append(line('.') - 1,s:msg)
-		return ''
-	else
-		return '/'
-	endif
-endfunction
-
-" 将文件中的内容以pop的方式显示出来
-function! <SID>ListAccount() abort
-	" &的定义描述见该文件头部
-	" s:mflag 只有3级
-	if &filetype == 'ledger'
-		let s:mflag = <SID>findflag()
-		if s:mflag > 4
-			let s:mflag = 4
-		endif
-		call ledgeopt#set_account_level(s:mflag+1)
-		let s:account = ledgeopt#get_accounts()
-		let s:newcontain = ['']
-		let s:empty = ''
-		if s:mflag < 2
-			let s:empty = ':'
-		elseif s:mflag == 2
-			" 注意转意字符一定要用双引号
-			let s:empty = "\<Tab>\<Tab>" . '￥'
-		endif
-
-		for n in s:account
-			call add(s:newcontain,n.s:empty)
-		endfor
-
-		call s:ListContain(s:newcontain)
-
-  		return ''
-	endif
-	" 正常的非ledger文件格式的文件
-	return ':'
-endfunc
 
 func TimerProcess(timer)
 	echo 'Handler called'
@@ -381,8 +300,3 @@ command! -nargs=0 Wvuootest  		call <SID>test_oo_function()
 " 需要添加秒数为参数
 command! -nargs=1 WvuStartTimer     	call <SID>StartTimer(<args>)
 command! -nargs=0 WvuInstrument  	call <SID>NormalInstrument()
-
-" 在插入的状态下，键入:，并且如果是ledger文件类型
-" 就能调用这个函数
-inoremap : <C-R>=<SID>ListAccount()<CR>
-inoremap / <C-R>=<SID>EnterDate()<CR>

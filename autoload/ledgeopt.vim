@@ -5,6 +5,7 @@
 " Last Change:	2019.08.03
 " Maintainer:   kevin.wang kevin.wang2004@hotmail.com	
 " License:	This file is placed in the public domain.
+" Description:	处理ledge账户输入的功能
 scriptencoding utf-8
 
 " 避免一个插件被加载多次
@@ -13,10 +14,15 @@ if exists('g:ledgeopt_exits')
 endif
 let g:ledgeopt_exits = 1
 
+" 账户信息的路径
+if !exists('g:ledger_accounts_source_path') 
+	let g:ledger_accounts_source_path='/home/kevin/account'
+endif
+
 " 整个账户信息需要的变量
 let s:load_account_finish_flag = 0
 " 全部原始数据
-let s:account=[]
+let s:accounts=[]
 " 一级账户
 let s:gaccount=[]
 " 二级账户
@@ -38,13 +44,13 @@ let s:select_gaccount=''
 let s:select_saccount=''
 let s:select_taccount=''
 
-function! ledgeopt#set_gaccounts(value) abort
+function! ledgeopt#set_gaccount(value) abort
 	let s:select_gaccount=a:value
 endfunction
-function! ledgeopt#set_saccounts(value) abort
+function! ledgeopt#set_saccount(value) abort
 	let s:select_saccount=a:value
 endfunction
-function! ledgeopt#set_taccounts(value) abort
+function! ledgeopt#set_taccount(value) abort
 	let s:select_taccount=a:value
 endfunction
 
@@ -54,9 +60,9 @@ function! ledgeopt#load_gaccounts(path) abort
 		let s:acline = readfile(a:path)
 		for ac in s:acline
 			let s:ellist = split(ac,':')
-			call add(s:account,s:ellist)
+			call add(s:accounts,s:ellist)
 		endfor
-		for s:element in s:account
+		for s:element in s:accounts
 			call add(s:gaccount,s:element[0])	
 		endfor
 		call uniq(sort(s:gaccount))
@@ -67,7 +73,7 @@ endfunction
 " 载入二级科目
 function! ledgeopt#load_saccounts(gaccount) abort
 	let s:saccount=[]
-	for s:element in s:account
+	for s:element in s:accounts
 		if s:element[0] == a:gaccount 
 			call add(s:saccount,s:element[1])
 		endif
@@ -78,7 +84,7 @@ endfunction
 " 载入三级科目
 function! ledgeopt#load_taccounts(gaccount,saccount) abort
 	let s:taccount=[]
-	for s:element in s:account
+	for s:element in s:accounts
 		if s:element[0] == a:gaccount && s:element[1] == a:saccount
 			call add(s:taccount,s:element[2])
 		endif
@@ -108,7 +114,7 @@ endfunction
 " 接口函数，输入参数是第几级的科目
 function! ledgeopt#get_accounts() abort
 	if 	s:account_level == 1
-		call ledgeopt#load_gaccounts('/home/kevin/account')
+		call ledgeopt#load_gaccounts(g:ledger_accounts_source_path)
 		return ledgeopt#get_gaccounts()
 	elseif  s:account_level == 2
 		call ledgeopt#load_saccounts(s:select_gaccount)
