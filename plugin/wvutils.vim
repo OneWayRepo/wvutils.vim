@@ -120,6 +120,8 @@ endfunction
 "
 " Test 函数用于自己测试使用
 function! <SID>Test() abort
+	call ledgeopt#load_gaccounts("/home/kevin/account")
+	return
 	" 每一个dictionary 包含一个key-value对
 	" 之间用colon(冒号)分离
 	" 注意 key 都是字符串,就算是数字，也是字符串
@@ -145,7 +147,39 @@ function! <SID>Test() abort
 	" call minifuctionsets#message("当前颜色:",1)
 	"call pythonfunctionset#pythonprint("hello")
 
-	call minifuctionsets#asyn_create_dir("/home/kevin","123")
+	"call minifuctionsets#asyn_create_dir("/home/kevin","123")
+	
+	let s:account=[]
+	let s:acline = readfile("/home/kevin/account")
+	for ac in s:acline
+		let s:ellist = split(ac,':')
+		call add(s:account,s:ellist)
+	endfor
+
+	let s:account1=[]
+	for s:element in s:account
+		call add(s:account1,s:element[0])	
+	endfor
+	call uniq(sort(s:account1))	
+	echo s:account1
+
+	let s:account2=[]
+	for s:element in s:account
+		if s:element[0] == '支出'
+			call add(s:account2,s:element[1])	
+		endif
+	endfor
+	call uniq(sort(s:account2))	
+	echo s:account2
+
+	let s:account3=[]
+	for s:element in s:account
+		if s:element[0] == '支出' && s:element[1] == '用车'
+			call add(s:account3,s:element[2])	
+		endif
+	endfor
+	call uniq(sort(s:account3))
+	echo s:account3
 endfunction
 
 fun! CompleteMonths(findstart, base) abort
@@ -159,7 +193,7 @@ fun! CompleteMonths(findstart, base) abort
 		return start
 	else
 		" find months matching with "a:base"
-		for m in split("Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec")
+		for m in split("Jan1 Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec")
 			if m =~ '^' . a:base
 				call complete_add(m)
 			endif
@@ -171,7 +205,46 @@ fun! CompleteMonths(findstart, base) abort
 		return []
 	endif
 endfun
-set completefunc=CompleteMonths
+
+augroup CompleteEventGroup
+	autocmd!
+	autocmd CompleteDone *.ldg call s:AccountFinish() 
+augroup END
+fun! s:AccountFinish() abort
+	let s:level = ledgeopt#get_account_level() 
+	if 	s:level == 1
+		call ledgeopt#set_gaccounts(ledgeopt#filte_string(v:completed_item['word']))
+	elseif s:level == 2
+		call ledgeopt#set_saccounts(ledgeopt#filte_string(v:completed_item['word']))
+	endif
+endfun
+
+"　补全账户信息
+fun! CompleteAccount(findstart, base) abort
+	if a:findstart
+		" locate the start of the word
+		let line = getline('.')
+		let start = col('.') - 1
+		while start > 0 && line[start - 1] =~ '\a'
+			let start -= 1
+		endwhile
+		return start
+	else
+		let s:account=[]
+		let s:acline = readfile("/home/kevin/account")
+
+		for m in s:acline
+			call complete_add(m)
+			sleep 100m	" simulate searching for next match
+			if complete_check()
+				break
+			endif
+		endfor
+		return []
+	endif
+endfun
+" Ctrl-X  Ctrl-U之后进行触发
+set completefunc=CompleteAccount
 
 " 在popupmenu中显示内容
 function! s:ListContain(contain) abort
@@ -211,8 +284,6 @@ endfunction
 
 " 将文件中的内容以pop的方式显示出来
 function! <SID>ListAccount() abort
-	let s:refpath ='/' . modulesmanager#get_vimfiles_dir() . '/' . 'modules/private/plugged/wvutils.vim/data/'
-	let s:accountscripts = ['gaccount.vim','saccount.vim','ssaccount.vim','empty.vim']
 	" &的定义描述见该文件头部
 	" s:mflag 只有3级
 	if &filetype == 'ledger'
@@ -220,16 +291,15 @@ function! <SID>ListAccount() abort
 		if s:mflag > 4
 			let s:mflag = 4
 		endif
-		let s:desfile = $HOME.s:refpath.s:accountscripts[s:mflag]
-		let s:account=readfile(s:desfile,'')
+		call ledgeopt#set_account_level(s:mflag+1)
+		let s:account = ledgeopt#get_accounts()
 		let s:newcontain = ['']
 		let s:empty = ''
-
 		if s:mflag < 2
 			let s:empty = ':'
 		elseif s:mflag == 2
 			" 注意转意字符一定要用双引号
-			let s:empty = "\<Tab>\<Tab>".'￥'
+			let s:empty = "\<Tab>\<Tab>" . '￥'
 		endif
 
 		for n in s:account
@@ -237,6 +307,7 @@ function! <SID>ListAccount() abort
 		endfor
 
 		call s:ListContain(s:newcontain)
+
   		return ''
 	endif
 	" 正常的非ledger文件格式的文件
