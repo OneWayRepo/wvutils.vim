@@ -55,19 +55,24 @@ function! ledgeopt#set_taccount(value) abort
 endfunction
 
 " 载入全部的账户信息
-function! ledgeopt#load_gaccounts(path) abort
+function! ledgeopt#init_accounts(path) abort
 	if s:load_account_finish_flag == 0
 		let s:acline = readfile(a:path)
 		for ac in s:acline
 			let s:ellist = split(ac,':')
 			call add(s:accounts,s:ellist)
 		endfor
-		for s:element in s:accounts
-			call add(s:gaccount,s:element[0])	
-		endfor
-		call uniq(sort(s:gaccount))
 		let s:load_account_finish_flag = 1
 	endif
+endfunction
+
+" 载入一级科目
+function! ledgeopt#load_gaccounts() abort
+	let s:gaccount=[]
+	for s:element in s:accounts
+		call add(s:gaccount,s:element[0])	
+	endfor
+	call uniq(sort(s:gaccount))
 endfunction
 
 " 载入二级科目
@@ -117,8 +122,9 @@ endfunction
 
 " 接口函数，输入参数是第几级的科目
 function! ledgeopt#get_accounts() abort
+	call ledgeopt#init_accounts(g:ledger_accounts_source_path)
 	if 	s:account_level == 0
-		call ledgeopt#load_gaccounts(g:ledger_accounts_source_path)
+		call ledgeopt#load_gaccounts()
 		return ledgeopt#get_gaccounts()
 	elseif  s:account_level == 1
 		call ledgeopt#load_saccounts(s:select_gaccount)

@@ -66,10 +66,6 @@ function! <SID>ListAccount() abort
 
 		let s:newcontain = ['']
 		let s:empty = ''
-		if s:number_colon == 2
-			" 注意转意字符一定要用双引号
-			let s:empty = "\<Tab>\<Tab>" . '￥'
-		endif
 
 		for n in s:account
 			call add(s:newcontain,n.s:empty)
@@ -96,8 +92,13 @@ fun! s:AccountFinish() abort
 		call ledgeopt#set_saccount(v:completed_item['word'])
 	endif
 
-	call setline(line('.'),getline(".") . ':')
-	call cursor(line('.'),col('.') + 1)
+	if s:level < 2
+		call setline(line('.'),getline(".") . ':')
+		call cursor(line('.'),col('.') + 1)
+	else
+		call setline(line('.'),getline(".") . "\<Tab>\<Tab>" . '￥')
+		call cursor(line('.'),col('.') + 9)
+	endif
 endfun
 
 " 在popupmenu中显示内容
