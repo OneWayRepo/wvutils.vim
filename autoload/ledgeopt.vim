@@ -56,6 +56,34 @@ endfunction
 
 " 下一代的数据结构
 let s:accountsets = {}
+" 已经被选择了的账户集合
+let s:preaccounts = []
+function! ledgeopt#clean_pre_accounts() abort
+	let s:preaccounts = []
+endfun
+
+" 获得下一代的账户信息 
+function! ledgeopt#get_next_accounts() abort
+	let aaaa =ledgeopt#get_list_accounts(s:preaccounts)
+	echomsg aaaa
+	return ledgeopt#get_list_accounts(s:preaccounts)
+endfun
+
+" 设置下一代的账户信息
+function! ledgeopt#add_next_accounts(account) abort
+	call add(s:preaccounts,a:account)
+endfun
+
+" 是否没有下一级的科目 
+function! ledgeopt#whether_end_account() abort
+	let s:result = ledgeopt#get_list_accounts(s:preaccounts)
+	if len(s:result) == 0 
+		return 1
+	else
+		return 0
+	endif
+endfun
+
 
 " 载入全部的账户信息
 function! ledgeopt#init_accounts(path) abort
@@ -66,15 +94,15 @@ function! ledgeopt#init_accounts(path) abort
 			call add(s:accounts,s:ellist)
 		endfor
 
-		let s:input = []
-		let s:tlist = ledgeopt#get_list_accounts(s:input)
+		"let s:input = []
+		"let s:tlist = ledgeopt#get_list_accounts(s:input)
 
-		for eachline in s:tlist
-			let s:input = []
-			call add(s:input,eachline)
-			let s:accountsets[eachline] = ledgeopt#get_list_accounts(s:input)
-		endfor
-		echomsg s:accountsets
+		"for eachline in s:tlist
+		"	let s:input = []
+		"	call add(s:input,eachline)
+		"	let s:accountsets[eachline] = ledgeopt#get_list_accounts(s:input)
+		"endfor
+		"echomsg s:accountsets
 
 		let s:load_account_finish_flag = 1
 	endif
@@ -88,19 +116,27 @@ function! ledgeopt#get_list_accounts(keylist) abort
 	let s:flag = 0
 	let s:object = []
 	let s:tl = 0
+	let s:maxdeep = 0
 	for s:element in s:accounts
 		let s:index = 0
 		let s:flag = 0
-		while s:index < s:length
-			if s:element[s:index] != a:keylist[s:index] 
-				let s:flag = 1
-			endif
-			let s:index = s:index + 1
-		endwhile
+		let s:maxdeep = len(s:element)
+		if s:maxdeep < s:length
+			let s:flag = 1
+		else
+			while s:index < s:length
+				if s:element[s:index] != a:keylist[s:index] 
+					let s:flag = 1
+				endif
+				let s:index = s:index + 1
+			endwhile
+		endif
 		if s:flag == 0 
 			let s:tl = s:length - 1
-			if len(s:element[s:length]) > s:tl
-				call add(s:object,s:element[s:tl + 1])	
+			if s:length < s:maxdeep 
+				if len(s:element[s:length]) > s:tl
+					call add(s:object,s:element[s:tl + 1])
+				endif
 			endif
 		endif
 	endfor

@@ -58,21 +58,18 @@ function! <SID>ListAccount() abort
 	if &filetype == 'ledger'
 		let s:number_colon = <SID>calculate_colon()
 		call ledgeopt#set_account_level(s:number_colon)
-		let s:account = ledgeopt#get_accounts()
+
+		if s:number_colon == 0
+			call ledgeopt#init_accounts(g:ledger_accounts_source_path)
+			call ledgeopt#clean_pre_accounts()
+		endif
+		let s:account = ledgeopt#get_next_accounts()
 
 		if s:account == [] 
 			return ''
 		endif
 
-		let s:newcontain = ['']
-		let s:empty = ''
-
-		for n in s:account
-			call add(s:newcontain,n.s:empty)
-		endfor
-
-		call s:ListContain(s:newcontain)
-
+		call s:ListContain(s:account)
   		return ''
 	endif
 	" 正常的非ledger文件格式的文件
@@ -85,19 +82,14 @@ augroup CompleteEventGroup
 	autocmd CompleteDone *.ldg call s:AccountFinish() 
 augroup END
 fun! s:AccountFinish() abort
-	let s:level = ledgeopt#get_account_level() 
-	if 	s:level == 0
-		call ledgeopt#set_gaccount(v:completed_item['word'])
-	elseif	s:level == 1
-		call ledgeopt#set_saccount(v:completed_item['word'])
-	endif
+	call ledgeopt#add_next_accounts(v:completed_item['word'])
 
-	if s:level < 2
-		call setline(line('.'),getline(".") . ':')
-		call cursor(line('.'),col('.') + 1)
-	else
+	if ledgeopt#whether_end_account()
 		call setline(line('.'),getline(".") . "\<Tab>\<Tab>" . '￥')
 		call cursor(line('.'),col('.') + 9)
+	else
+		call setline(line('.'),getline(".") . ':')
+		call cursor(line('.'),col('.') + 1)
 	endif
 endfun
 
