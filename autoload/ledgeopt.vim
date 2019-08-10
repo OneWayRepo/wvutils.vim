@@ -54,6 +54,9 @@ function! ledgeopt#set_taccount(value) abort
 	let s:select_taccount=a:value
 endfunction
 
+" 下一代的数据结构
+let s:accountsets = {}
+
 " 载入全部的账户信息
 function! ledgeopt#init_accounts(path) abort
 	if s:load_account_finish_flag == 0
@@ -62,8 +65,58 @@ function! ledgeopt#init_accounts(path) abort
 			let s:ellist = split(ac,':')
 			call add(s:accounts,s:ellist)
 		endfor
+
+		let s:input = []
+		let s:tlist = ledgeopt#get_list_accounts(s:input)
+
+		for eachline in s:tlist
+			let s:input = []
+			call add(s:input,eachline)
+			let s:accountsets[eachline] = ledgeopt#get_list_accounts(s:input)
+		endfor
+		echomsg s:accountsets
+
 		let s:load_account_finish_flag = 1
 	endif
+endfunction
+
+" 输入是一个包含　一级＼二级＼．．．账户信息的列表
+" 依据一个ｌｉｓｔ获得下一级的ａｃｃｏｕｎｔｓ
+function! ledgeopt#get_list_accounts(keylist) abort
+	let s:length = len(a:keylist)
+	let s:index = 0
+	let s:flag = 0
+	let s:object = []
+	let s:tl = 0
+	for s:element in s:accounts
+		let s:index = 0
+		let s:flag = 0
+		while s:index < s:length
+			if s:element[s:index] != a:keylist[s:index] 
+				let s:flag = 1
+			endif
+			let s:index = s:index + 1
+		endwhile
+		if s:flag == 0 
+			let s:tl = s:length - 1
+			if len(s:element[s:length]) > s:tl
+				call add(s:object,s:element[s:tl + 1])	
+			endif
+		endif
+	endfor
+	call uniq(sort(s:object))
+	return s:object
+endfunction
+
+" 计算账户科目的深度 
+function! ledgeopt#calculate_accounts_deeps(accounts) abort
+	let s:deep = 0
+	for s:echolist in a:accounts
+		let s:tlen = len(s:echolist)
+		if s:deep < s:tlen 
+			let s:deep = s:tlen
+		endif
+	endfor
 endfunction
 
 " 载入一级科目
