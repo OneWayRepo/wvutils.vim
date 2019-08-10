@@ -23,39 +23,7 @@ endif
 let s:load_account_finish_flag = 0
 " 全部原始数据
 let s:accounts=[]
-" 一级账户
-let s:gaccount=[]
-" 二级账户
-let s:saccount=[]
-" 三级账户
-let s:taccount=[]
 
-" 设置科目级别
-let s:account_level = 0
-function! ledgeopt#set_account_level(value) abort
-	let s:account_level=a:value
-endfunction
-function! ledgeopt#get_account_level() abort
-	return s:account_level
-endfunction
-
-" 设置当前的各级科目状态
-let s:select_gaccount=''
-let s:select_saccount=''
-let s:select_taccount=''
-
-function! ledgeopt#set_gaccount(value) abort
-	let s:select_gaccount=a:value
-endfunction
-function! ledgeopt#set_saccount(value) abort
-	let s:select_saccount=a:value
-endfunction
-function! ledgeopt#set_taccount(value) abort
-	let s:select_taccount=a:value
-endfunction
-
-" 下一代的数据结构
-let s:accountsets = {}
 " 已经被选择了的账户集合
 let s:preaccounts = []
 function! ledgeopt#clean_pre_accounts() abort
@@ -93,16 +61,6 @@ function! ledgeopt#init_accounts(path) abort
 			let s:ellist = split(ac,':')
 			call add(s:accounts,s:ellist)
 		endfor
-
-		"let s:input = []
-		"let s:tlist = ledgeopt#get_list_accounts(s:input)
-
-		"for eachline in s:tlist
-		"	let s:input = []
-		"	call add(s:input,eachline)
-		"	let s:accountsets[eachline] = ledgeopt#get_list_accounts(s:input)
-		"endfor
-		"echomsg s:accountsets
 
 		let s:load_account_finish_flag = 1
 	endif
@@ -188,38 +146,4 @@ function! ledgeopt#load_taccounts(gaccount,saccount) abort
 		endif
 	endfor
 	call uniq(sort(s:taccount))
-endfunction
-
-" 返回一级科目
-function! ledgeopt#get_gaccounts() abort
-	if s:load_account_finish_flag == 1
-		return s:gaccount
-	else
-		call minifuctionsets#message('call load_account firstly',1)
-	endif
-endfunction
-
-" 返回二级科目
-function! ledgeopt#get_saccounts() abort
-	return s:saccount
-endfunction
-
-" 返回三级科目
-function! ledgeopt#get_taccounts() abort
-	return s:taccount
-endfunction
-
-" 接口函数，输入参数是第几级的科目
-function! ledgeopt#get_accounts() abort
-	call ledgeopt#init_accounts(g:ledger_accounts_source_path)
-	if 	s:account_level == 0
-		call ledgeopt#load_gaccounts()
-		return ledgeopt#get_gaccounts()
-	elseif  s:account_level == 1
-		call ledgeopt#load_saccounts(s:select_gaccount)
-		return ledgeopt#get_saccounts()
-	elseif 	s:account_level == 2
-		call ledgeopt#load_taccounts(s:select_gaccount,s:select_saccount)
-		return ledgeopt#get_taccounts()
-	endif
 endfunction

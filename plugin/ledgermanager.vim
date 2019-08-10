@@ -57,7 +57,6 @@ function! <SID>ListAccount() abort
 	" &的定义描述见该文件头部
 	if &filetype == 'ledger'
 		let s:number_colon = <SID>calculate_colon()
-		call ledgeopt#set_account_level(s:number_colon)
 
 		if s:number_colon == 0
 			call ledgeopt#init_accounts(g:ledger_accounts_source_path)
