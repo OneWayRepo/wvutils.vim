@@ -58,8 +58,11 @@ function! ledgeopt#init_accounts(path) abort
 	if s:load_account_finish_flag == 0
 		let s:acline = readfile(a:path)
 		for ac in s:acline
-			let s:ellist = split(ac,':')
-			call add(s:accounts,s:ellist)
+			if stridx(ac,'account') != -1
+				let s:tt = strpart(ac,8) 
+				let s:ellist = split(s:tt,':')
+				call add(s:accounts,s:ellist)
+			endif
 		endfor
 
 		let s:load_account_finish_flag = 1
