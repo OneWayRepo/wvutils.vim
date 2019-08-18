@@ -26,7 +26,8 @@ inoremap / <C-R>=<SID>EnterDate()<CR>
 function! <SID>EnterDate() abort
 	if &filetype == 'ledger'
 		let s:date = strftime("%Y/%m/%d")
-		let s:msg = input("输入凭证 ", s:date."\<Tab>\<Tab>".'*')
+		" 注意一定要双引号
+		let s:msg = input("输入凭证 ", s:date."\<Tab>".'*'." ")
 		let failed = append(line('.') - 1,s:msg)
 		return ''
 	else
