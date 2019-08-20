@@ -1146,7 +1146,8 @@ hi! link jsonString colorsboxFg1
 " ledger: {{{
 
 hi! link LedgerKeyword colorsboxRed
-hi! link AccountKeyword colorsboxYellowBold
+hi! link LedgerAccountKeyword colorsboxYellowBold
+hi! link LedgerPayee colorsboxGreenBold
 
 " }}}
 

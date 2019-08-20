@@ -1,4 +1,6 @@
 syn match LedgerKeyword "￥"
+syn match LedgerKeyword "include"
 syn region Comment start=";"  end="\n"
-syn match LedgerKeyword "*"
-syn match AccountKeyword ":"
+syn region Comment start="*" end="\n" skip="*" 
+syn region Comment start="comment" end="end comment"
+syn match LedgerAccountKeyword ":"
