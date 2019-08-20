@@ -4,4 +4,8 @@
 " Last Change:	2019.03.15
 " Maintainer:   kevin.wang kevin.wang2004@hotmail.com	
 " License:	This file is placed in the public domain.
+augroup ledgerautocmd 
+autocmd!
 au! BufRead,BufNewFile *.ldg	setfiletype ledger
+au! VimEnter *.ldg	colorschem ledgercolor
+augroup END
