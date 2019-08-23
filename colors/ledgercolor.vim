@@ -1150,6 +1150,10 @@ hi! link LedgerAccountKeyword colorsboxYellowBold
 hi! link LedgerPayee Comment 
 hi! link LedgerDate colorsboxBlue
 
+hi! link LedgerPlus colorsboxRed
+hi! link LedgerMinus colorsboxGreen
+hi! link AAA colorsboxYellowx
+
 " }}}
 
 " Functions -------------------------------------------------------------------
