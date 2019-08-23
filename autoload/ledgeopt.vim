@@ -33,7 +33,6 @@ endfun
 " 获得下一代的账户信息 
 function! ledgeopt#get_next_accounts() abort
 	let aaaa =ledgeopt#get_list_accounts(s:preaccounts)
-	echomsg aaaa
 	return ledgeopt#get_list_accounts(s:preaccounts)
 endfun
 
