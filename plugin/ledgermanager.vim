@@ -65,8 +65,9 @@ function! <SID>ListAccount() abort
 		endif
 		let s:account = ledgeopt#get_next_accounts()
 
+		" 如果没有匹配到任何账户，直接输出:
 		if s:account == [] 
-			return ''
+			return ':'
 		endif
 
 		call s:ListContain(s:account)
