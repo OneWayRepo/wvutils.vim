@@ -1,5 +1,8 @@
 syn match LedgerKeyword "￥"
 syn match LedgerKeyword "include"
+syn match LedgerKeyword "apply"
+syn match LedgerKeyword "tag"
+syn match LedgerKeyword "end"
 syn region Comment start=";"  end="\n"
 syn region LedgerPayee matchgroup=LedgerKeyword start="*" end="$" skip="*" 
 syn region Comment start="comment" end="end comment"
