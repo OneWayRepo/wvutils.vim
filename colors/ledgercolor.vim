@@ -94,13 +94,15 @@ let s:gb.light3      = ['#636D45', 248]     " 189-174-147
 let s:gb.light4      = ['#717D4F', 246]     " 168-153-132
 let s:gb.light4_256  = ['#717D4F', 246]     " 168-153-132
 
-let s:gb.bright_red     = ['#990000', 167]     " 251-73-52
-let s:gb.bright_green   = ['#1E8000', 142]     " 184-187-38
-let s:gb.bright_yellow  = ['#807700', 214]     " 250-189-47
+let s:gb.bright_red     = ['#FF0000', 1]     " 251-73-52
+let s:gb.bright_green   = ['#00875F', 29]     " 184-187-38
+let s:gb.bright_yellow  = ['#FFFFDF', 230]     " 250-189-47
 let s:gb.bright_blue    = ['#002499', 109]     " 131-165-152
 let s:gb.bright_purple  = ['#8C008F', 175]     " 211-134-155
 let s:gb.bright_aqua    = ['#007099', 108]     " 142-192-124
 let s:gb.bright_orange  = ['#804800', 208]     " 254-128-25
+let s:gb.bright_ghostwhite = ['#F8F8FF', 231]  " 248-248-255
+let s:gb.bright_black   = ['#000000', 0]         " 0-0-0
 
 
 " }}}
@@ -172,6 +174,8 @@ let s:blue   = s:gb.bright_blue
 let s:purple = s:gb.bright_purple
 let s:aqua   = s:gb.bright_aqua
 let s:orange = s:gb.bright_orange
+let s:ghostwhite = s:gb.bright_ghostwhite
+let s:black = s:gb.bright_black
 
 " reset to 16 colors fallback
 if g:colorsbox_termcolors == 16
@@ -185,6 +189,7 @@ if g:colorsbox_termcolors == 16
   let s:purple[1] = 13
   let s:aqua[1]   = 14
   let s:fg1[1]    = 15
+  let s:black[1]  = 0
 endif
 
 " save current relative colors back to palette dictionary
@@ -373,7 +378,8 @@ call s:HL('colorsboxAquaSign', s:aqua, s:sign_column, s:invert_signs)
 " General UI: {{{
 
 " Normal text
-call s:HL('Normal', s:fg0, s:bg0)
+"call s:HL('Normal', s:fg0, s:bg0)
+call s:HL('Normal', s:black, s:yellow)
 
 " Correct background (see issue #7):
 " --- Problem with changing between dark and light on 256 color terminal
