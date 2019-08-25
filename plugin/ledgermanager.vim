@@ -22,6 +22,20 @@ endif
 inoremap : <C-R>=<SID>ListAccount()<CR>
 inoremap / <C-R>=<SID>EnterDate()<CR>
 
+" 显示报表的命令
+command! -nargs=0 LedgerReport  	call <SID>LedgerReport()
+
+" 显示报表
+function! <SID>LedgerReport() abort
+	if &filetype == 'ledger'
+		silent! execute 'vertical botright ' . "98" . 'split ' . "/tmp/ldg.rep" 
+		let failed = minifuctionsets#appendtexttofile(0,"<<----投资报表---->>")
+		silent! execute 'r! ledger -f ~/DataLibrary/kevin.wang-account/ledger/kevin-ledger.ldg -S T --price-db ~/.calcurse/price.db reg tag subflag=建行' 
+	else
+		return 'r'
+	endif
+endfunction
+
 " 显示日期
 function! <SID>EnterDate() abort
 	if &filetype == 'ledger'
