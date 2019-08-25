@@ -3,6 +3,8 @@ syn match LedgerKeyword "include"
 syn match LedgerKeyword "apply"
 syn match LedgerKeyword "tag"
 syn match LedgerKeyword "end"
+syn match LedgerKeyword "account"
+syn match LedgerKeyword "commodity"
 syn region Comment start=";" end="$"
 syn region LedgerPlus start="￥" end="$" contains=AAA
 syn region LedgerMinus start="￥-" end="$" contains=AAA
