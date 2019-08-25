@@ -350,6 +350,7 @@ call s:HL('colorsboxBg1', s:bg1)
 call s:HL('colorsboxBg2', s:bg2)
 call s:HL('colorsboxBg3', s:bg3)
 
+call s:HL('colorsboxBlack', s:black, s:none, s:bold)
 call s:HL('colorsboxRed', s:red)
 call s:HL('colorsboxRedBold', s:red, s:none, s:bold)
 call s:HL('colorsboxGreen', s:green)
@@ -732,7 +733,7 @@ hi! link diffLine colorsboxBlue
 " ledger: {{{
 
 hi! link LedgerKeyword colorsboxRed
-hi! link LedgerAccountKeyword colorsboxYellowBold
+hi! link LedgerAccountKeyword colorsboxBlack
 hi! link LedgerPayee Comment 
 hi! link LedgerDate colorsboxBlue
 
