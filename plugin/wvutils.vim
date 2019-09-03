@@ -117,7 +117,15 @@ function! g:wvutils#version() abort
 	return	s:wvutils_version
 endfunction
 
-"
+" Replace 替换函数 
+function! <SID>Replace() abort
+	let s:src    = input("输入被替换字符串: ", "")
+	let s:des    = input("输入替换字符串: ", "")
+	if s:src != '' && s:des != ''
+		execute "%s/".s:src."/".s:des."/"."gc"
+	endif
+endfunction
+
 " Test 函数用于自己测试使用
 function! <SID>Test() abort
 	call ledgeopt#load_gaccounts("/home/kevin/account")
@@ -296,6 +304,7 @@ command! -nargs=0 WvuPreview   		call <SID>SplitPreview()
 command! -nargs=0 WvuComment  		call <SID>AddComment()
 command! -nargs=0 WvuTest     		call <SID>Test()
 command! -nargs=0 Wvuootest  		call <SID>test_oo_function()
+command! -nargs=0 WvuReplace  		call <SID>Replace()
 " 添加需要函数参数的命令
 " 需要添加秒数为参数
 command! -nargs=1 WvuStartTimer     	call <SID>StartTimer(<args>)
